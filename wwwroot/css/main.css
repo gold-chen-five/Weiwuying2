@@ -1,0 +1,30 @@
+﻿html,body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.webgl {
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+    z-index: 1;
+}
+
+.btnEnter {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+.loading_img {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    height: 250px;
+    width: 250px;
+    z-index: 2;
+}
