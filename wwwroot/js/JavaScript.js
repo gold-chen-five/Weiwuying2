@@ -1,102 +1,7 @@
-﻿import { GLTFLoader } from './GLTFLoader.js';
-import { OrbitControls } from './OrbitControls.js';
-
-/**
- * Loaders
- */
-const gltfLoader = new GLTFLoader()
-const cubeTextureLoader = new THREE.CubeTextureLoader()
-
-/**
- * Base
- */
-// Debug
-// Canvas
-const canvas = document.querySelector('canvas.webgl')
-
-// Scene
-const scene = new THREE.Scene()
-
-/**
- * Update all materials
- */
-const updateAllMaterials = () => {
-    scene.traverse((child) => {
-        if (child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial) {
-            // child.material.envMap = environmentMap
-            // child.material.envMapIntensity = debugObject.envMapIntensity
-            child.material.envMapIntensity = 1
-            child.material.needsUpdate = true
-            child.castShadow = true
-            child.receiveShadow = true
-        }
-    })
-}
-
-/**
- * Environment map
- */
-const environmentMap = cubeTextureLoader.load([
-    '/models/textures/environmentMaps/0/px.jpg',
-    '/models/textures/environmentMaps/0/nx.jpg',
-    '/models/textures/environmentMaps/0/py.jpg',
-    '/models/textures/environmentMaps/0/ny.jpg',
-    '/models/textures/environmentMaps/0/pz.jpg',
-    '/models/textures/environmentMaps/0/nz.jpg'
-])
-
-environmentMap.encoding = THREE.sRGBEncoding
-
-scene.background = environmentMap
-scene.environment = environmentMap
-
-//debugObject.envMapIntensity = 2.5
-//gui.add(debugObject, 'envMapIntensity').min(0).max(10).step(0.001).onChange(updateAllMaterials)
-
-/**
- * Models
- */
-gltfLoader.load(
-    '/models/0309_wei_V13.glb',
-    (gltf) => {
-        gltf.scene.scale.set(0.05, 0.05, 0.05)
-        gltf.scene.position.set(0, -3, 0)
-        gltf.scene.rotation.y = Math.PI * 1
-        scene.add(gltf.scene)
-
-        
-
-        updateAllMaterials()
-    }
-)
-
-// gltfLoader.load(
-//     '/models/hamburger.glb',
-//     (gltf) =>
-//     {
-//         gltf.scene.scale.set(0.3, 0.3, 0.3)
-//         gltf.scene.position.set(0, - 1, 0)
-//         scene.add(gltf.scene)
-
-//         updateAllMaterials()
-//     }
-// )
-
-/**
- * Lights
- */
-const directionalLight = new THREE.DirectionalLight('#ffffff', 3)
-directionalLight.castShadow = true
-directionalLight.shadow.camera.far = 15
-directionalLight.shadow.mapSize.set(1024, 1024)
-directionalLight.shadow.normalBias = 0.05
-directionalLight.position.set(0.25, 3, - 2.25)
-scene.add(directionalLight)
-
-//gui.add(directionalLight, 'intensity').min(0).max(10).step(0.001).name('lightIntensity')
-//gui.add(directionalLight.position, 'x').min(- 5).max(5).step(0.001).name('lightX')
-//gui.add(directionalLight.position, 'y').min(- 5).max(5).step(0.001).name('lightY')
-//gui.add(directionalLight.position, 'z').min(- 5).max(5).step(0.001).name('lightZ')
+﻿
+import { GLTFLoader } from './threeJS/GLTFLoader.js';
+import { OrbitControls } from './threeJS/OrbitControls.js';
+import { DRACOLoader } from './threeJS/DRACOLoader.js'
 
 /**
  * Sizes
@@ -105,6 +10,122 @@ const sizes = {
     width: window.innerWidth,
     height: window.innerHeight
 }
+
+/**
+ * Base
+ */
+// Debug
+
+
+// Canvas
+const canvas = document.querySelector('canvas.webgl')
+
+// Scene
+const scene = new THREE.Scene()
+
+/**
+ * Camera
+ */
+// Base camera
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.01, 1000)
+camera.position.set(0, 4, 15);
+scene.add(camera)
+
+//Models
+//const dracoLoader = new DRACOLoader()
+//dracoLoader.setDecoderPath('/draco/')
+
+const gltfLoader = new GLTFLoader()
+//gltfLoader.setDRACOLoader(dracoLoader)
+
+/**
+ * Update all materials
+ */
+const updateAllMaterials = () => {
+    scene.traverse((child) => {
+        if (child instanceof THREE.Mesh && child.material instanceof THREE.MeshStandardMaterial) {
+            console.log(child)
+            // child.material.envMap = environmentMap
+            child.material.envMapIntensity = 5
+            child.material.needsUpdate = true
+            child.castShadow = true
+            child.receiveShadow = true
+
+        }
+    })
+}
+
+//rwd
+const rwdModelPosition = (rwd) => {
+    return window.matchMedia(rwd).matches ? (camera.fov = 95) : (camera.fov = 75);
+}
+
+//camera zoomin
+const cameraZoomIn = () => {
+    if (camera.fov < 20) {
+        //setTimeout(UI.VideoStart, 2000)
+        alert('hhh')
+        return
+    }
+    camera.fov -= 0.5;
+    camera.updateProjectionMatrix();
+}
+
+
+let obj = null
+gltfLoader.load(
+    '/models/0419_wei_uncompress_V26.glb',
+    (gltf) => {
+        obj = gltf.scene
+
+        //scene.add(gltf.scene.children[0])
+        // const children = [...gltf.scene.children]
+        // for (const child of children ){
+        //     scene.add(child)
+        // }
+        //mixer = new THREE.AnimationMixer(gltf.scene)
+        //const action = mixer.clipAction(gltf.animations[2])
+        //action.play()
+
+        //position set 
+        //obj.rotation.y = Math.PI
+        obj.position.set(0, 0, 0);
+        obj.scale.set(0.05, 0.05, 0.05)
+        //camera.lookAt(obj.position)
+
+        //update material
+        //updateAllMaterials()
+
+        //rwdModelPosition("(max-width: 425px)");
+        //camera.updateProjectionMatrix();
+
+       
+        scene.add(gltf.scene)
+
+        
+    }
+)
+
+
+/**
+ * Lights
+ */
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.8)
+scene.add(ambientLight)
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6)
+directionalLight.castShadow = true
+directionalLight.shadow.mapSize.set(1024, 1024)
+directionalLight.shadow.camera.far = 15
+//directionalLight.shadow.camera.left = - 7
+//directionalLight.shadow.camera.top = 7
+//directionalLight.shadow.camera.right = 7
+//directionalLight.shadow.camera.bottom = - 7
+directionalLight.shadow.normalBias = 0.05
+directionalLight.position.set(0.25, 3, - 2.25)
+scene.add(directionalLight)
+
+
 
 window.addEventListener('resize', () => {
     // Update sizes
@@ -118,54 +139,63 @@ window.addEventListener('resize', () => {
     // Update renderer
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+    //phone
+    rwdModelPosition("(max-width: 425px)");
+    camera.updateProjectionMatrix();
 })
 
-/**
- * Camera
- */
-// Base camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(0,0,-10)
-scene.add(camera)
+//window.addEventListener('orientationchange', () => {
+//    // Update sizes
+//    sizes.width = window.innerWidth
+//    sizes.height = window.innerHeight
+
+//    // Update camera
+//    camera.aspect = sizes.width / sizes.height
+//    camera.updateProjectionMatrix()
+
+//    // Update renderer
+//    renderer.setSize(sizes.width, sizes.height)
+//    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+//    //phone
+//    rwdModelPosition("(max-width: 425px)");
+//    camera.updateProjectionMatrix();
+//})
+
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
+controls.target.set(0, 0.75, 0)
 controls.enableDamping = true
 
 /**
  * Renderer
  */
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas,
-    antialias: true
+    antialias: true, alpha: true,canvas: canvas
 })
-renderer.physicallyCorrectLights = true
-renderer.outputEncoding = THREE.sRGBEncoding
-renderer.toneMapping = THREE.ReinhardToneMapping
-renderer.toneMappingExposure = 3
+
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-
-//gui
-//    .add(renderer, 'toneMapping', {
-//        No: THREE.NoToneMapping,
-//        Linear: THREE.LinearToneMapping,
-//        Reinhard: THREE.ReinhardToneMapping,
-//        Cineon: THREE.CineonToneMapping,
-//        ACESFilmic: THREE.ACESFilmicToneMapping
-//    })
-//    .onFinishChange(() => {
-//        renderer.toneMapping = Number(renderer.toneMapping)
-//        updateAllMaterials()
-//    })
-//gui.add(renderer, 'toneMappingExposure').min(0).max(10).step(0.001)
-
+renderer.setClearColor(0x000000, 0);
 /**
  * Animate
  */
+const clock = new THREE.Clock()
+let previousTime = 0
+
 const tick = () => {
+
+    if(obj)
+        obj.rotation.y += 0.005
+    
+    const elapsedTime = clock.getElapsedTime()
+    const deltaTime = elapsedTime - previousTime
+    previousTime = elapsedTime
+
     // Update controls
     controls.update()
 

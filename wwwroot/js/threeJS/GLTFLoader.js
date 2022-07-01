@@ -2984,7 +2984,6 @@ class GLTFParser {
 
 				if ( useDerivativeTangents ) {
 
-					// https://github.com/mrdoob/three.js/issues/11438#issuecomment-507003995
 					if ( cachedMaterial.normalScale ) cachedMaterial.normalScale.y *= - 1;
 					if ( cachedMaterial.clearcoatNormalScale ) cachedMaterial.clearcoatNormalScale.y *= - 1;
 
@@ -3855,7 +3854,7 @@ class GLTFParser {
 		const parser = this;
 
 		// Loader returns Group, not Scene.
-		// See: https://github.com/mrdoob/three.js/issues/18342#issuecomment-578981172
+		
 		const scene = new Group();
 		if ( sceneDef.name ) scene.name = parser.createUniqueName( sceneDef.name );
 
